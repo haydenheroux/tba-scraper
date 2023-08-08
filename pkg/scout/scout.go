@@ -66,7 +66,7 @@ func (s *Scout) InsertTeam(team Team) error {
 		return err
 	}
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != 200 && response.StatusCode != 500 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -97,7 +97,7 @@ func (s *Scout) InsertEvent(event Event) error {
 		return err
 	}
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != 200 && response.StatusCode != 500 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -136,7 +136,7 @@ func (s *Scout) InsertSeason(season Season, team Team) error {
 		return err
 	}
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != 200 && response.StatusCode != 500 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -183,13 +183,37 @@ func join(vs ...url.Values) url.Values {
 }
 
 func (s *Scout) AddEvent(event Event, season Season, team Team) error {
-	body, err := json.Marshal(season)
+	request, err := s.post(addEventURL, join(event.ToValues(), season.ToValues(), team.ToValues()), "")
 
 	if err != nil {
 		return err
 	}
 
-	request, err := s.post(addEventURL, join(event.ToValues(), season.ToValues(), team.ToValues()), string(body))
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode != 200 && response.StatusCode != 500 {
+		return fmt.Errorf("status code %d", response.StatusCode)
+	}
+
+	return nil
+}
+
+const (
+	newRobotURL = "/api/new-robot"
+)
+
+func (s *Scout) InsertRobot(robot Robot, season Season, team Team) error {
+	body, err := json.Marshal(robot)
+
+	if err != nil {
+		return err
+	}
+
+	request, err := s.post(newRobotURL, join(season.ToValues(), team.ToValues()), string(body))
 	request.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
@@ -202,7 +226,7 @@ func (s *Scout) AddEvent(event Event, season Season, team Team) error {
 		return err
 	}
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != 200 && response.StatusCode != 500 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 

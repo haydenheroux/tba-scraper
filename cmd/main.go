@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -70,6 +71,14 @@ func main() {
 
 		if err := db.InsertSeason(season, adapter.ToScoutTeam(team)); err != nil {
 			logger.Fatalf("Failed to insert season: %v\n", err)
+		}
+
+		robot := scout.Robot{
+			Name: fmt.Sprintf("%d %d Robot", team.Number, season.Year),
+		}
+
+		if err := db.InsertRobot(robot, season, adapter.ToScoutTeam(team)); err != nil {
+			logger.Fatalf("Failed to insert robot: %v\n", err)
 		}
 
 		if err := db.AddEvent(adapter.ToScoutEvent(event), season, adapter.ToScoutTeam(team)); err != nil {
