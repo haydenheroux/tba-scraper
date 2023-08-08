@@ -39,7 +39,7 @@ func main() {
 
 	api := tba.New(apiKey)
 
-	scout := scout.New(scoutURL)
+	db := scout.New(scoutURL)
 
 	event, err := api.GetEvent(eventKey)
 
@@ -47,7 +47,7 @@ func main() {
 		logger.Fatalf("Failed to get event: %v\n", err)
 	}
 
-	if err := scout.InsertEvent(adapter.ToScoutEvent(event)); err != nil {
+	if err := db.InsertEvent(adapter.ToScoutEvent(event)); err != nil {
 		logger.Fatalf("Failed to insert event: %v\n", err)
 	}
 
@@ -58,8 +58,22 @@ func main() {
 	}
 
 	for _, team := range teams {
-		if err := scout.InsertTeam(adapter.ToScoutTeam(team)); err != nil {
+		if err := db.InsertTeam(adapter.ToScoutTeam(team)); err != nil {
 			logger.Fatalf("Failed to insert team: %v\n", err)
+		}
+
+		season := scout.Season{
+			Year:   event.Year,
+			Robots: []scout.Robot{},
+			Events: []scout.Event{},
+		}
+
+		if err := db.InsertSeason(season, adapter.ToScoutTeam(team)); err != nil {
+			logger.Fatalf("Failed to insert season: %v\n", err)
+		}
+
+		if err := db.AddEvent(adapter.ToScoutEvent(event), season, adapter.ToScoutTeam(team)); err != nil {
+			logger.Fatalf("Failed to add event: %v\n", err)
 		}
 	}
 
