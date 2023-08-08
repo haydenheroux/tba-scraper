@@ -95,25 +95,18 @@ func main() {
 	for _, matchKey := range matchKeys {
 		match, err := api.GetMatch(matchKey, event.Year)
 
+		match2022 := match.(tba.Match2022)
+
 		if err != nil {
 			logger.Fatalf("Failed to get match: %v\n", err)
 		}
 
-		if err := db.InsertMatch(adapter.ToScoutMatch(match.(tba.Match2022)), adapter.ToScoutEvent(event)); err != nil {
+		if err := db.InsertMatch(adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
 			logger.Fatalf("Failed to add match: %v\n", err)
 		}
 
 		fmt.Println(match)
 	}
-
-	// for _, match := range matches {
-	// 	if err := scout.InsertMatch(match); err != nil {
-	// 		logger.Fatalf("Failed to insert match: %v\n", err)
-	// 	}
-
-	// 	matchKey := match.eventKey
-
-	// 	matchData := api.GetMatchData(matchKey)
 
 	// 	if err := scout.InsertMatchData(matchData); err != nil {
 	// 		logger.Fatalf("Failed to insert match data: %v\n", err)
