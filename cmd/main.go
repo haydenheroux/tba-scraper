@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
+	"haydenheroux.github.io/adapter"
 	"haydenheroux.github.io/scout"
 	"haydenheroux.github.io/tba"
-	"haydenheroux.github.io/tbascraper/pkg/adapter"
 )
 
 const (
@@ -41,6 +41,16 @@ func main() {
 
 	scout := scout.New(scoutURL)
 
+	event, err := api.GetEvent(eventKey)
+
+	if err != nil {
+		logger.Fatalf("Failed to get event: %v\n", err)
+	}
+
+	if err := scout.InsertEvent(adapter.ToScoutEvent(event)); err != nil {
+		logger.Fatalf("Failed to insert event: %v\n", err)
+	}
+
 	teams, err := api.GetTeams(eventKey)
 
 	if err != nil {
@@ -48,9 +58,7 @@ func main() {
 	}
 
 	for _, team := range teams {
-		team := adapter.ToScoutTeam(team)
-
-		if err := scout.InsertTeam(team); err != nil {
+		if err := scout.InsertTeam(adapter.ToScoutTeam(team)); err != nil {
 			logger.Fatalf("Failed to insert team: %v\n", err)
 		}
 	}

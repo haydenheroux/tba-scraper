@@ -72,3 +72,34 @@ func (s *Scout) InsertTeam(team Team) error {
 
 	return nil
 }
+
+const (
+	newEventURL = "/api/new-event"
+)
+
+func (s *Scout) InsertEvent(event Event) error {
+	body, err := json.Marshal(event)
+
+	if err != nil {
+		return err
+	}
+
+	request, err := s.post(newEventURL, url.Values{}, string(body))
+	request.Header.Set("Content-Type", "application/json")
+
+	if err != nil {
+		return err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode != 200 {
+		return fmt.Errorf("status code %d", response.StatusCode)
+	}
+
+	return nil
+}

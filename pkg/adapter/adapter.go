@@ -5,16 +5,21 @@ import (
 	"haydenheroux.github.io/tba"
 )
 
-func ToScoutTeam(tbaTeam tba.Team) scout.Team {
+func ToScoutTeam(team tba.Team) scout.Team {
 	return scout.Team{
-		Number:  tbaTeam.Number,
-		Name:    tbaTeam.Nickname,
-		Region:  scoutRegionOf(tbaTeam),
+		Number:  team.Number,
+		Name:    team.Nickname,
+		Region:  "ne", // TODO
 		Seasons: []scout.Season{},
 	}
 }
 
-func scoutRegionOf(tbaTeam tba.Team) string {
-	// TODO
-	return "ne"
+func ToScoutEvent(event tba.Event) scout.Event {
+	return scout.Event{
+		Name:    event.Name,
+		Region:  "ne", // TODO event.District.Abbreviation
+		Year:    event.Year,
+		Week:    0, // TODO
+		Matches: []scout.Match{},
+	}
 }

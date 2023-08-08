@@ -20,3 +20,24 @@ type Team struct {
 	RookieYear      int    `json:"rookie_year"`
 	Motto           string `json:"motto"`
 }
+
+type Event struct {
+	City      string   `json:"city"`
+	Country   string   `json:"country"`
+	District  District `json:"district"`
+	EndDate   string   `json:"end_date"`
+	Code      string   `json:"event_code"`
+	Type      int      `json:"event_type"`
+	Key       string   `json:"key"`
+	Name      string   `json:"name"`
+	StartDate string   `json:"start_date"`
+	State     string   `json:"state_prov"`
+	Year      int      `json:"year"`
+}
+
+type District struct {
+	Abbreviation string `json:"abbreviation"`
+	Name         string `json:"display_name"`
+	Key          string `json:"key"`
+	Year         int    `json:"year"`
+}

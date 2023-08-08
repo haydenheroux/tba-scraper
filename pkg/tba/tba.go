@@ -75,3 +75,35 @@ func (tba *TBA) GetTeams(eventKey string) ([]Team, error) {
 
 	return teams, nil
 }
+
+const (
+	eventURL = "/event/%s/simple"
+)
+
+func (tba *TBA) GetEvent(eventKey string) (Event, error) {
+	endpoint := fmt.Sprintf(eventURL, eventKey)
+
+	request, err := tba.get(endpoint, nil)
+
+	if err != nil {
+		return Event{}, err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return Event{}, err
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+
+	if err != nil {
+		return Event{}, err
+	}
+
+	var event Event
+	json.Unmarshal(body, &event)
+
+	return event, nil
+}
