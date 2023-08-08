@@ -86,11 +86,15 @@ func main() {
 		}
 	}
 
-	// matches, err := api.GetMatches(eventKey)
+	matchKeys, err := api.GetMatchKeys(eventKey)
 
-	// if err != nil {
-	// 	logger.Fatalf("Failed to get matches: %v\n", err)
-	// }
+	if err != nil {
+		logger.Fatalf("Failed to get match keys: %v\n", err)
+	}
+
+	for _, matchKey := range matchKeys {
+		println(matchKey)
+	}
 
 	// for _, match := range matches {
 	// 	if err := scout.InsertMatch(match); err != nil {

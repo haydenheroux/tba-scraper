@@ -107,3 +107,35 @@ func (tba *TBA) GetEvent(eventKey string) (Event, error) {
 
 	return event, nil
 }
+
+const (
+	getMatchKeysURL = "/event/%s/matches/keys"
+)
+
+func (tba *TBA) GetMatchKeys(eventKey string) ([]string, error) {
+	endpoint := fmt.Sprintf(getMatchKeysURL, eventKey)
+
+	request, err := tba.get(endpoint, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var matchKeys []string
+	json.Unmarshal(body, &matchKeys)
+
+	return matchKeys, nil
+}
