@@ -2,6 +2,7 @@ package tba
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -138,4 +139,45 @@ func (tba *TBA) GetMatchKeys(eventKey string) ([]string, error) {
 	json.Unmarshal(body, &matchKeys)
 
 	return matchKeys, nil
+}
+
+const (
+	getMatchURL = "/match/%s"
+)
+
+func (tba *TBA) GetMatch(eventKey string, year int) (any, error) {
+	endpoint := fmt.Sprintf(getMatchURL, eventKey)
+
+	request, err := tba.get(endpoint, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	switch year {
+	case 2023:
+		return nil, errors.New("TODO")
+	case 2022:
+		var match Match2022
+		json.Unmarshal(body, &match)
+
+		println(string(body))
+
+		return match, nil
+	default:
+		return nil, fmt.Errorf("match struct not implemented for %d", year)
+	}
 }

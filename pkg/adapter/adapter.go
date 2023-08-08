@@ -23,3 +23,31 @@ func ToScoutEvent(event tba.Event) scout.Event {
 		Matches: []scout.Match{},
 	}
 }
+
+func ToScoutMatch(match tba.Match2022) scout.Match {
+	return scout.Match{
+		Number:       match.MatchNumber,
+		Type:         getMatchType(match),
+		Participants: []scout.Participant{},
+	}
+}
+
+func getMatchType(match tba.Match2022) string {
+	// TODO Take set number into account
+	switch match.CompLevel {
+	case "q":
+		match.MatchNumber += 1000 // TODO
+		return "qualification"
+	case "qf":
+		match.MatchNumber += 10000 // TODO
+		return "playoff"
+	case "sf":
+		match.MatchNumber += 100000 // TODO
+		return "playoff"
+	case "f":
+		match.MatchNumber += 1000000 // TODO
+		return "playoff"
+	default:
+		return "qualification" // TODO
+	}
+}

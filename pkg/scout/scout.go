@@ -232,3 +232,34 @@ func (s *Scout) InsertRobot(robot Robot, season Season, team Team) error {
 
 	return nil
 }
+
+const (
+	newMatchURL = "/api/new-match"
+)
+
+func (s *Scout) InsertMatch(match Match, event Event) error {
+	body, err := json.Marshal(match)
+
+	if err != nil {
+		return err
+	}
+
+	request, err := s.post(newMatchURL, event.ToValues(), string(body))
+	request.Header.Set("Content-Type", "application/json")
+
+	if err != nil {
+		return err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode != 200 && response.StatusCode != 500 {
+		return fmt.Errorf("status code %d", response.StatusCode)
+	}
+
+	return nil
+}

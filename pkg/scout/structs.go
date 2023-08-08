@@ -26,7 +26,7 @@ type Event struct {
 }
 
 type Match struct {
-	Number       string        `json:"number"`
+	Number       int           `json:"number"`
 	Type         string        `json:"type"`
 	Participants []Participant `json:"participants"` // TODO Must be empty
 }
