@@ -2,11 +2,12 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
+	"haydenheroux.github.io/scout"
 	"haydenheroux.github.io/tba"
+	"haydenheroux.github.io/tbascraper/pkg/adapter"
 )
 
 const (
@@ -38,7 +39,7 @@ func main() {
 
 	api := tba.New(apiKey)
 
-	// scout := scout.New(scoutURL)
+	scout := scout.New(scoutURL)
 
 	teams, err := api.GetTeams(eventKey)
 
@@ -46,14 +47,12 @@ func main() {
 		logger.Fatalf("Failed to get teams: %v\n", err)
 	}
 
-	println("Hi", api.APIKey, teams, err)
-
 	for _, team := range teams {
-		fmt.Println(team)
+		team := adapter.ToScoutTeam(team)
 
-		// if err := scout.InsertTeam(team); err != nil {
-		// 	logger.Fatalf("Failed to insert team: %v\n", err)
-		// }
+		if err := scout.InsertTeam(team); err != nil {
+			logger.Fatalf("Failed to insert team: %v\n", err)
+		}
 	}
 
 	// matches, err := api.GetMatches(eventKey)

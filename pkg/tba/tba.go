@@ -66,8 +66,6 @@ func (tba *TBA) GetTeams(eventKey string) ([]Team, error) {
 	body, err := ioutil.ReadAll(response.Body)
 	defer response.Body.Close()
 
-	println(string(body))
-
 	if err != nil {
 		return nil, err
 	}
