@@ -3,7 +3,7 @@ package memo
 import "haydenheroux.github.io/scout"
 
 var (
-	memo map[int]memoized
+	memo map[int]memoized = make(map[int]memoized)
 )
 
 type memoized struct {
@@ -13,7 +13,11 @@ type memoized struct {
 }
 
 func Memoize(team scout.Team, season scout.Season, robot scout.Robot) {
-
+	memo[team.Number] = memoized{
+		team:   team,
+		season: season,
+		robot:  robot,
+	}
 }
 
 func Has(teamNumber int) bool {
