@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 
 	"haydenheroux.github.io/adapter"
 	"haydenheroux.github.io/scout"
@@ -105,11 +107,84 @@ func main() {
 			logger.Fatalf("Failed to add match: %v\n", err)
 		}
 
-		fmt.Println(match)
+		for n, teamKey := range match2022.Alliances.Blue.TeamKeys {
+			participant := scout.Participant{
+				Alliance: "blue",
+				Metrics:  getMetricsFor(match2022.Metrics.Blue, n),
+			}
+
+			teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
+
+			if err != nil {
+				logger.Fatalf("Failed to get team number: %v\n", err)
+			}
+
+			team, err := db.GetTeam(teamNumber)
+
+			if err != nil {
+				logger.Fatalf("Failed to get team: %v\n", err)
+			}
+
+			season := getSeason(team, event.Year)
+
+			robot := season.Robots[0] // TODO
+
+			if err := db.InsertParticipant(participant, robot, season, team, adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
+				logger.Fatalf("Failed to add participant: %v\n", err)
+			}
+		}
+
+	}
+}
+
+func getMetricsFor(m tba.AllianceMetrics2022, robotNumber int) []scout.Metric {
+	var autoTaxi string
+	var endgameClimb string
+
+	switch robotNumber {
+	case 1:
+		autoTaxi = m.TaxiRobot1
+		endgameClimb = m.EndgameRobot1
+	case 2:
+		autoTaxi = m.TaxiRobot2
+		endgameClimb = m.EndgameRobot2
+	case 3:
+		autoTaxi = m.TaxiRobot3
+		endgameClimb = m.EndgameRobot3
 	}
 
-	// 	if err := scout.InsertMatchData(matchData); err != nil {
-	// 		logger.Fatalf("Failed to insert match data: %v\n", err)
-	// 	}
-	// }
+	// TODO Check for double-counting
+	autoScoredUpper := m.AutoCargoUpperBlue + m.AutoCargoUpperRed + m.AutoCargoUpperFar + m.AutoCargoUpperNear
+	autoScoredLower := m.AutoCargoLowerBlue + m.AutoCargoLowerRed + m.AutoCargoLowerFar + m.AutoCargoLowerNear
+	teleopScoredUpper := m.TeleopCargoUpperBlue + m.TeleopCargoUpperRed + m.TeleopCargoUpperFar + m.TeleopCargoUpperNear
+	teleopScoredLower := m.TeleopCargoLowerBlue + m.TeleopCargoLowerRed + m.TeleopCargoLowerFar + m.TeleopCargoLowerNear
+
+	var metrics []scout.Metric
+
+	metrics = append(metrics, scout.Metric{Key: "autoTaxi", Value: autoTaxi})
+	metrics = append(metrics, scout.Metric{Key: "allianceAutoCargoScored", Value: fmt.Sprint(m.AutoCargoTotal)})
+	metrics = append(metrics, scout.Metric{Key: "allianceAutoCargoScoredLower", Value: fmt.Sprint(autoScoredLower)})
+	metrics = append(metrics, scout.Metric{Key: "allianceAutoCargoScoredUpper", Value: fmt.Sprint(autoScoredUpper)})
+	metrics = append(metrics, scout.Metric{Key: "allianceAutoCargoPoints", Value: fmt.Sprint(m.AutoCargoPoints)})
+	metrics = append(metrics, scout.Metric{Key: "allianceAutoPoints", Value: fmt.Sprint(m.AutoPoints)})
+
+	metrics = append(metrics, scout.Metric{Key: "allianceTeleopCargoScored", Value: fmt.Sprint(m.TeleopCargoTotal)})
+	metrics = append(metrics, scout.Metric{Key: "allianceTeleopCargoScoredLower", Value: fmt.Sprint(teleopScoredLower)})
+	metrics = append(metrics, scout.Metric{Key: "allianceTeleopCargoScoredUpper", Value: fmt.Sprint(teleopScoredUpper)})
+	metrics = append(metrics, scout.Metric{Key: "allianceTeleopCargoPoints", Value: fmt.Sprint(m.TeleopCargoPoints)})
+	metrics = append(metrics, scout.Metric{Key: "allianceTeleopPoints", Value: fmt.Sprint(m.TeleopPoints)})
+
+	metrics = append(metrics, scout.Metric{Key: "endgameClimb", Value: endgameClimb})
+
+	return metrics
+}
+
+func getSeason(team scout.Team, year int) scout.Season {
+	for _, season := range team.Seasons {
+		if season.Year == year {
+			return season
+		}
+	}
+
+	return scout.Season{}
 }

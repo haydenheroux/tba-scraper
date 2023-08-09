@@ -51,7 +51,7 @@ type Match2022 struct {
 	MatchNumber     int           `json:"match_number"`
 	PostResultTime  int           `json:"post_result_time"`
 	PredictedTime   int           `json:"predicted_time"`
-	ScoreBreakdown  Metrics2022   `json:"score_breakdown"`
+	Metrics         Metrics2022   `json:"score_breakdown"`
 	SetNumber       int           `json:"set_number"`
 	Time            int           `json:"time"`
 	Videos          []Videos      `json:"videos"`

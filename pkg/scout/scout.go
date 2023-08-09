@@ -3,6 +3,7 @@ package scout
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -34,6 +35,29 @@ func (s *Scout) post(endpoint string, values url.Values, body string) (*http.Req
 	}
 
 	request, err := http.NewRequest("POST", url.String(), strings.NewReader(body))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return request, nil
+}
+func (s *Scout) get(endpoint string, values url.Values) (*http.Request, error) {
+	var query string
+
+	if len(values) > 0 {
+		query = "?" + values.Encode()
+	} else {
+		query = ""
+	}
+
+	url, err := url.Parse(s.URL + endpoint + query)
+
+	if err != nil || url.Scheme == "" || url.Host == "" {
+		return nil, fmt.Errorf("malformed url")
+	}
+
+	request, err := http.NewRequest("GET", url.String(), nil)
 
 	if err != nil {
 		return nil, err
@@ -245,6 +269,87 @@ func (s *Scout) InsertMatch(match Match, event Event) error {
 	}
 
 	request, err := s.post(newMatchURL, event.ToValues(), string(body))
+	request.Header.Set("Content-Type", "application/json")
+
+	if err != nil {
+		return err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode != 200 && response.StatusCode != 500 {
+		return fmt.Errorf("status code %d", response.StatusCode)
+	}
+
+	return nil
+}
+
+const (
+	getTeamURL = "/api/get-team"
+)
+
+func (s *Scout) GetTeam(teamNumber int) (Team, error) {
+	values := url.Values{}
+
+	values.Add("team", fmt.Sprint(teamNumber))
+
+	request, err := s.get(getTeamURL, values)
+
+	if err != nil {
+		return Team{}, err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return Team{}, err
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+
+	if err != nil {
+		return Team{}, err
+	}
+
+	var team Team
+	json.Unmarshal(body, &team)
+
+	return team, nil
+}
+
+const (
+	newParticipantURL = "/api/new-participant"
+)
+
+func (r *Robot) ToValues() url.Values {
+	values := url.Values{}
+
+	values.Add("robot", r.Name)
+
+	return values
+}
+
+func (m *Match) ToValues() url.Values {
+	values := url.Values{}
+
+	values.Add("match", fmt.Sprint(m.Number))
+
+	return values
+}
+
+func (s *Scout) InsertParticipant(participant Participant, robot Robot, season Season, team Team, match Match, event Event) error {
+	body, err := json.Marshal(participant)
+
+	if err != nil {
+		return err
+	}
+
+	request, err := s.post(newParticipantURL, join(robot.ToValues(), season.ToValues(), team.ToValues(), match.ToValues(), event.ToValues()), string(body))
 	request.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
