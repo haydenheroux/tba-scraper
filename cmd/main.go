@@ -16,21 +16,18 @@ import (
 
 const (
 	APP_NAME          = "tbascraper"
-	DEFAULT_YEAR      = 0
 	DEFAULT_EVENT     = ""
 	DEFAULT_API_KEY   = ""
 	DEFAULT_SCOUT_URL = ""
 )
 
 var (
-	year     int
 	eventKey string
 	apiKey   string
 	scoutURL string
 )
 
 func init() {
-	flag.IntVar(&year, "year", DEFAULT_YEAR, "Year")
 	flag.StringVar(&eventKey, "eventKey", DEFAULT_EVENT, "Event Key")
 	flag.StringVar(&apiKey, "apiKey", DEFAULT_API_KEY, "API Key")
 	flag.StringVar(&scoutURL, "scoutURL", DEFAULT_SCOUT_URL, "Scout URL")
