@@ -11,6 +11,7 @@ import (
 	"haydenheroux.github.io/adapter"
 	"haydenheroux.github.io/scout"
 	"haydenheroux.github.io/tba"
+	"haydenheroux.github.io/tbascraper/pkg/memo"
 )
 
 const (
@@ -61,7 +62,9 @@ func main() {
 	}
 
 	for _, team := range teams {
-		if err := db.InsertTeam(adapter.ToScoutTeam(team)); err != nil {
+		team := adapter.ToScoutTeam(team)
+
+		if err := db.InsertTeam(team); err != nil {
 			logger.Fatalf("Failed to insert team: %v\n", err)
 		}
 
@@ -71,7 +74,7 @@ func main() {
 			Events: []scout.Event{},
 		}
 
-		if err := db.InsertSeason(season, adapter.ToScoutTeam(team)); err != nil {
+		if err := db.InsertSeason(season, team); err != nil {
 			logger.Fatalf("Failed to insert season: %v\n", err)
 		}
 
@@ -79,13 +82,15 @@ func main() {
 			Name: fmt.Sprintf("%d %d Robot", team.Number, season.Year),
 		}
 
-		if err := db.InsertRobot(robot, season, adapter.ToScoutTeam(team)); err != nil {
+		if err := db.InsertRobot(robot, season, team); err != nil {
 			logger.Fatalf("Failed to insert robot: %v\n", err)
 		}
 
-		if err := db.AddEvent(adapter.ToScoutEvent(event), season, adapter.ToScoutTeam(team)); err != nil {
+		if err := db.AddEvent(adapter.ToScoutEvent(event), season, team); err != nil {
 			logger.Fatalf("Failed to add event: %v\n", err)
 		}
+
+		memo.Memoize(team, season, robot)
 	}
 
 	matchKeys, err := api.GetMatchKeys(eventKey)
@@ -119,15 +124,11 @@ func main() {
 				logger.Fatalf("Failed to get team number: %v\n", err)
 			}
 
-			team, err := db.GetTeam(teamNumber)
+			team, season, robot := memo.Get(teamNumber)
 
 			if err != nil {
 				logger.Fatalf("Failed to get team: %v\n", err)
 			}
-
-			season := getSeason(team, event.Year)
-
-			robot := season.Robots[0] // TODO
 
 			if err := db.InsertParticipant(participant, robot, season, team, adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
 				logger.Fatalf("Failed to add participant: %v\n", err)
@@ -177,14 +178,4 @@ func getMetricsFor(m tba.AllianceMetrics2022, robotNumber int) []scout.Metric {
 	metrics = append(metrics, scout.Metric{Key: "endgameClimb", Value: endgameClimb})
 
 	return metrics
-}
-
-func getSeason(team scout.Team, year int) scout.Season {
-	for _, season := range team.Seasons {
-		if season.Year == year {
-			return season
-		}
-	}
-
-	return scout.Season{}
 }
