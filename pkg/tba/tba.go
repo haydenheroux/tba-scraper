@@ -174,8 +174,6 @@ func (tba *TBA) GetMatch(eventKey string, year int) (any, error) {
 		var match Match2022
 		json.Unmarshal(body, &match)
 
-		println(string(body))
-
 		return match, nil
 	default:
 		return nil, fmt.Errorf("match struct not implemented for %d", year)

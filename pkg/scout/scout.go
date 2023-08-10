@@ -337,19 +337,34 @@ func (r *Robot) ToValues() url.Values {
 func (m *Match) ToValues() url.Values {
 	values := url.Values{}
 
-	values.Add("match", fmt.Sprint(m.Number))
+	values.Add("match", m.MatchKey())
 
 	return values
 }
 
-func (s *Scout) InsertParticipant(participant Participant, robot Robot, season Season, team Team, match Match, event Event) error {
+func (m *Match) MatchKey() string {
+	var s string
+
+	s += m.Type
+
+	if m.Type != "qm" {
+		s += fmt.Sprint(m.Set)
+		s += "m"
+	}
+
+	s += fmt.Sprint(m.Number)
+
+	return s
+}
+
+func (s *Scout) InsertParticipant(participant Participant, team Team, match Match, event Event) error {
 	body, err := json.Marshal(participant)
 
 	if err != nil {
 		return err
 	}
 
-	request, err := s.post(newParticipantURL, join(robot.ToValues(), season.ToValues(), team.ToValues(), match.ToValues(), event.ToValues()), string(body))
+	request, err := s.post(newParticipantURL, join(team.ToValues(), match.ToValues(), event.ToValues()), string(body))
 	request.Header.Set("Content-Type", "application/json")
 
 	if err != nil {

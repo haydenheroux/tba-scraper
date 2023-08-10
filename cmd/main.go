@@ -121,13 +121,13 @@ func main() {
 				logger.Fatalf("Failed to get team number: %v\n", err)
 			}
 
-			team, season, robot := memo.Get(teamNumber)
+			team, _, _ := memo.Get(teamNumber)
 
 			if err != nil {
 				logger.Fatalf("Failed to get team: %v\n", err)
 			}
 
-			if err := db.InsertParticipant(participant, robot, season, team, adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
+			if err := db.InsertParticipant(participant, team, adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
 				logger.Fatalf("Failed to add participant: %v\n", err)
 			}
 		}
@@ -144,13 +144,13 @@ func main() {
 				logger.Fatalf("Failed to get team number: %v\n", err)
 			}
 
-			team, season, robot := memo.Get(teamNumber)
+			team, _, _ := memo.Get(teamNumber)
 
 			if err != nil {
 				logger.Fatalf("Failed to get team: %v\n", err)
 			}
 
-			if err := db.InsertParticipant(participant, robot, season, team, adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
+			if err := db.InsertParticipant(participant, team, adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
 				logger.Fatalf("Failed to add participant: %v\n", err)
 			}
 		}
@@ -174,7 +174,6 @@ func getMetricsFor(m tba.AllianceMetrics2022, robotNumber int) []scout.Metric {
 		endgameClimb = m.EndgameRobot3
 	}
 
-	// TODO Check for double-counting
 	autoScoredUpper := m.AutoCargoUpperBlue + m.AutoCargoUpperRed + m.AutoCargoUpperFar + m.AutoCargoUpperNear
 	autoScoredLower := m.AutoCargoLowerBlue + m.AutoCargoLowerRed + m.AutoCargoLowerFar + m.AutoCargoLowerNear
 	teleopScoredUpper := m.TeleopCargoUpperBlue + m.TeleopCargoUpperRed + m.TeleopCargoUpperFar + m.TeleopCargoUpperNear
