@@ -32,8 +32,9 @@ type Match struct {
 }
 
 type Participant struct {
-	Alliance string   `json:"alliance"`
-	Metrics  []Metric `json:"metrics"`
+	Alliance   string   `json:"alliance"`
+	TeamNumber string   `json:"teamNumber"`
+	Metrics    []Metric `json:"metrics"`
 }
 
 type Metric struct {

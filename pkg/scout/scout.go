@@ -342,14 +342,14 @@ func (m *Match) ToValues() url.Values {
 	return values
 }
 
-func (s *Scout) InsertParticipant(participant Participant, robot Robot, season Season, team Team, match Match, event Event) error {
+func (s *Scout) InsertParticipant(participant Participant, match Match, event Event) error {
 	body, err := json.Marshal(participant)
 
 	if err != nil {
 		return err
 	}
 
-	request, err := s.post(newParticipantURL, join(robot.ToValues(), season.ToValues(), team.ToValues(), match.ToValues(), event.ToValues()), string(body))
+	request, err := s.post(newParticipantURL, join(match.ToValues(), event.ToValues()), string(body))
 	request.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
