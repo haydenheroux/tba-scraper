@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"haydenheroux.github.io/adapter"
 	"haydenheroux.github.io/scout"
@@ -48,14 +49,24 @@ func main() {
 
 	eventKeys := flag.Args()
 
+	var wg sync.WaitGroup
+
 	for _, eventKey := range eventKeys {
-		logger.Printf("running %s\n", eventKey)
-		run(eventKey)
+		wg.Add(1)
+
+		go func(eventKey string) {
+			defer wg.Done()
+
+			run(eventKey)
+		}(eventKey)
 	}
 
+	wg.Wait()
 }
 
 func run(eventKey string) {
+	logger.Printf("running %s\n", eventKey)
+
 	event, err := api.GetEvent(eventKey)
 
 	if err != nil {
