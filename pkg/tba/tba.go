@@ -2,9 +2,8 @@ package tba
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 )
@@ -64,7 +63,7 @@ func (tba *TBA) GetTeams(eventKey string) ([]Team, error) {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	defer response.Body.Close()
 
 	if err != nil {
@@ -96,7 +95,7 @@ func (tba *TBA) GetEvent(eventKey string) (Event, error) {
 		return Event{}, err
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	defer response.Body.Close()
 
 	if err != nil {
@@ -128,7 +127,7 @@ func (tba *TBA) GetMatchKeys(eventKey string) ([]string, error) {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	defer response.Body.Close()
 
 	if err != nil {
@@ -160,7 +159,7 @@ func (tba *TBA) GetMatch(eventKey string, year int) (any, error) {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	defer response.Body.Close()
 
 	if err != nil {
@@ -169,12 +168,15 @@ func (tba *TBA) GetMatch(eventKey string, year int) (any, error) {
 
 	switch year {
 	case 2023:
-		return nil, errors.New("TODO")
-	case 2022:
-		var match Match2022
-		json.Unmarshal(body, &match)
+		var match2023 Match2023
+		json.Unmarshal(body, &match2023)
 
-		return match, nil
+		return match2023, nil
+	case 2022:
+		var match2022 Match2022
+		json.Unmarshal(body, &match2022)
+
+		return match2022, nil
 	default:
 		return nil, fmt.Errorf("match struct not implemented for %d", year)
 	}

@@ -11,6 +11,7 @@ import (
 	"haydenheroux.github.io/adapter"
 	"haydenheroux.github.io/scout"
 	"haydenheroux.github.io/tba"
+	"haydenheroux.github.io/tbascraper/pkg/data"
 	"haydenheroux.github.io/tbascraper/pkg/memo"
 )
 
@@ -33,14 +34,20 @@ func init() {
 	flag.StringVar(&scoutURL, "scoutURL", DEFAULT_SCOUT_URL, "Scout URL")
 }
 
+var (
+	logger *log.Logger
+	api    tba.TBA
+	db     scout.Scout
+)
+
 func main() {
 	flag.Parse()
 
-	logger := log.New(os.Stderr, APP_NAME+": ", 0)
+	logger = log.New(os.Stderr, APP_NAME+": ", 0)
 
-	api := tba.New(apiKey)
+	api = tba.New(apiKey)
 
-	db := scout.New(scoutURL)
+	db = scout.New(scoutURL)
 
 	event, err := api.GetEvent(eventKey)
 
@@ -48,7 +55,7 @@ func main() {
 		logger.Fatalf("Failed to get event: %v\n", err)
 	}
 
-	if err := db.InsertEvent(adapter.ToScoutEvent(event)); err != nil {
+	if err := db.InsertEvent(adapter.ToEvent(event)); err != nil {
 		logger.Fatalf("Failed to insert event: %v\n", err)
 	}
 
@@ -59,7 +66,7 @@ func main() {
 	}
 
 	for _, team := range teams {
-		team := adapter.ToScoutTeam(team)
+		team := adapter.ToTeam(team)
 
 		if err := db.InsertTeam(team); err != nil {
 			logger.Fatalf("Failed to insert team: %v\n", err)
@@ -83,7 +90,7 @@ func main() {
 			logger.Fatalf("Failed to insert robot: %v\n", err)
 		}
 
-		if err := db.AddEvent(adapter.ToScoutEvent(event), season, team); err != nil {
+		if err := db.AddEvent(adapter.ToEvent(event), season, team); err != nil {
 			logger.Fatalf("Failed to add event: %v\n", err)
 		}
 
@@ -99,102 +106,117 @@ func main() {
 	for _, matchKey := range matchKeys {
 		match, err := api.GetMatch(matchKey, event.Year)
 
-		match2022 := match.(tba.Match2022)
-
 		if err != nil {
 			logger.Fatalf("Failed to get match: %v\n", err)
 		}
 
-		if err := db.InsertMatch(adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
+		if err := db.InsertMatch(adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
 			logger.Fatalf("Failed to add match: %v\n", err)
 		}
 
-		for n, teamKey := range match2022.Alliances.Blue.TeamKeys {
-			participant := scout.Participant{
-				Alliance: "blue",
-				Metrics:  getMetricsFor(match2022.Metrics.Blue, n),
-			}
-
-			teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
-
-			if err != nil {
-				logger.Fatalf("Failed to get team number: %v\n", err)
-			}
-
-			team, _, _ := memo.Get(teamNumber)
-
-			if err != nil {
-				logger.Fatalf("Failed to get team: %v\n", err)
-			}
-
-			if err := db.InsertParticipant(participant, team, adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
-				logger.Fatalf("Failed to add participant: %v\n", err)
-			}
+		switch match.(type) {
+		case tba.Match2022:
+			DoMatch2022(match.(tba.Match2022), event)
+		case tba.Match2023:
+			DoMatch2023(match.(tba.Match2023), event)
 		}
-
-		for n, teamKey := range match2022.Alliances.Red.TeamKeys {
-			participant := scout.Participant{
-				Alliance: "red",
-				Metrics:  getMetricsFor(match2022.Metrics.Red, n),
-			}
-
-			teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
-
-			if err != nil {
-				logger.Fatalf("Failed to get team number: %v\n", err)
-			}
-
-			team, _, _ := memo.Get(teamNumber)
-
-			if err != nil {
-				logger.Fatalf("Failed to get team: %v\n", err)
-			}
-
-			if err := db.InsertParticipant(participant, team, adapter.ToScoutMatch(match2022), adapter.ToScoutEvent(event)); err != nil {
-				logger.Fatalf("Failed to add participant: %v\n", err)
-			}
-		}
-
 	}
 }
 
-func getMetricsFor(m tba.AllianceMetrics2022, robotNumber int) []scout.Metric {
-	var autoTaxi string
-	var endgameClimb string
+func DoMatch2022(match tba.Match2022, event tba.Event) {
+	for n, teamKey := range match.Alliances.Blue.TeamKeys {
+		participant := scout.Participant{
+			Alliance: "blue",
+			Metrics:  data.Metrics2022(match.ScoreBreakdown.Blue, n),
+		}
 
-	switch robotNumber {
-	case 0:
-		autoTaxi = m.TaxiRobot1
-		endgameClimb = m.EndgameRobot1
-	case 1:
-		autoTaxi = m.TaxiRobot2
-		endgameClimb = m.EndgameRobot2
-	case 2:
-		autoTaxi = m.TaxiRobot3
-		endgameClimb = m.EndgameRobot3
+		teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
+
+		if err != nil {
+			logger.Fatalf("Failed to get team number: %v\n", err)
+		}
+
+		team, _, _ := memo.Get(teamNumber)
+
+		if err != nil {
+			logger.Fatalf("Failed to get team: %v\n", err)
+		}
+
+		if err := db.InsertParticipant(participant, team, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
+			logger.Fatalf("Failed to add participant: %v\n", err)
+		}
 	}
 
-	autoScoredUpper := m.AutoCargoUpperBlue + m.AutoCargoUpperRed + m.AutoCargoUpperFar + m.AutoCargoUpperNear
-	autoScoredLower := m.AutoCargoLowerBlue + m.AutoCargoLowerRed + m.AutoCargoLowerFar + m.AutoCargoLowerNear
-	teleopScoredUpper := m.TeleopCargoUpperBlue + m.TeleopCargoUpperRed + m.TeleopCargoUpperFar + m.TeleopCargoUpperNear
-	teleopScoredLower := m.TeleopCargoLowerBlue + m.TeleopCargoLowerRed + m.TeleopCargoLowerFar + m.TeleopCargoLowerNear
+	for n, teamKey := range match.Alliances.Red.TeamKeys {
+		participant := scout.Participant{
+			Alliance: "red",
+			Metrics:  data.Metrics2022(match.ScoreBreakdown.Red, n),
+		}
 
-	var metrics []scout.Metric
+		teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
 
-	metrics = append(metrics, scout.Metric{Key: "autoTaxi", Value: autoTaxi})
-	metrics = append(metrics, scout.Metric{Key: "allianceAutoCargoScored", Value: fmt.Sprint(m.AutoCargoTotal)})
-	metrics = append(metrics, scout.Metric{Key: "allianceAutoCargoScoredLower", Value: fmt.Sprint(autoScoredLower)})
-	metrics = append(metrics, scout.Metric{Key: "allianceAutoCargoScoredUpper", Value: fmt.Sprint(autoScoredUpper)})
-	metrics = append(metrics, scout.Metric{Key: "allianceAutoCargoPoints", Value: fmt.Sprint(m.AutoCargoPoints)})
-	metrics = append(metrics, scout.Metric{Key: "allianceAutoPoints", Value: fmt.Sprint(m.AutoPoints)})
+		if err != nil {
+			logger.Fatalf("Failed to get team number: %v\n", err)
+		}
 
-	metrics = append(metrics, scout.Metric{Key: "allianceTeleopCargoScored", Value: fmt.Sprint(m.TeleopCargoTotal)})
-	metrics = append(metrics, scout.Metric{Key: "allianceTeleopCargoScoredLower", Value: fmt.Sprint(teleopScoredLower)})
-	metrics = append(metrics, scout.Metric{Key: "allianceTeleopCargoScoredUpper", Value: fmt.Sprint(teleopScoredUpper)})
-	metrics = append(metrics, scout.Metric{Key: "allianceTeleopCargoPoints", Value: fmt.Sprint(m.TeleopCargoPoints)})
-	metrics = append(metrics, scout.Metric{Key: "allianceTeleopPoints", Value: fmt.Sprint(m.TeleopPoints)})
+		team, _, _ := memo.Get(teamNumber)
 
-	metrics = append(metrics, scout.Metric{Key: "endgameClimb", Value: endgameClimb})
+		if err != nil {
+			logger.Fatalf("Failed to get team: %v\n", err)
+		}
 
-	return metrics
+		if err := db.InsertParticipant(participant, team, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
+			logger.Fatalf("Failed to add participant: %v\n", err)
+		}
+	}
+
+}
+
+func DoMatch2023(match tba.Match2023, event tba.Event) {
+	for n, teamKey := range match.Alliances.Blue.TeamKeys {
+		participant := scout.Participant{
+			Alliance: "blue",
+			Metrics:  data.Metrics2023(match.ScoreBreakdown.Blue, n),
+		}
+
+		teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
+
+		if err != nil {
+			logger.Fatalf("Failed to get team number: %v\n", err)
+		}
+
+		team, _, _ := memo.Get(teamNumber)
+
+		if err != nil {
+			logger.Fatalf("Failed to get team: %v\n", err)
+		}
+
+		if err := db.InsertParticipant(participant, team, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
+			logger.Fatalf("Failed to add participant: %v\n", err)
+		}
+	}
+
+	for n, teamKey := range match.Alliances.Red.TeamKeys {
+		participant := scout.Participant{
+			Alliance: "red",
+			Metrics:  data.Metrics2023(match.ScoreBreakdown.Red, n),
+		}
+
+		teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
+
+		if err != nil {
+			logger.Fatalf("Failed to get team number: %v\n", err)
+		}
+
+		team, _, _ := memo.Get(teamNumber)
+
+		if err != nil {
+			logger.Fatalf("Failed to get team: %v\n", err)
+		}
+
+		if err := db.InsertParticipant(participant, team, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
+			logger.Fatalf("Failed to add participant: %v\n", err)
+		}
+	}
+
 }

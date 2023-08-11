@@ -43,31 +43,39 @@ type District struct {
 }
 
 type Match2022 struct {
-	ActualTime      int           `json:"actual_time"`
-	Alliances       Alliances2022 `json:"alliances"`
-	CompLevel       string        `json:"comp_level"`
-	EventKey        string        `json:"event_key"`
-	Key             string        `json:"key"`
-	MatchNumber     int           `json:"match_number"`
-	PostResultTime  int           `json:"post_result_time"`
-	PredictedTime   int           `json:"predicted_time"`
-	Metrics         Metrics2022   `json:"score_breakdown"`
-	SetNumber       int           `json:"set_number"`
-	Time            int           `json:"time"`
-	Videos          []Videos      `json:"videos"`
-	WinningAlliance string        `json:"winning_alliance"`
+	ActualTime      int                `json:"actual_time"`
+	Alliances       Alliances          `json:"alliances"`
+	CompLevel       string             `json:"comp_level"`
+	EventKey        string             `json:"event_key"`
+	Key             string             `json:"key"`
+	MatchNumber     int                `json:"match_number"`
+	PostResultTime  int                `json:"post_result_time"`
+	PredictedTime   int                `json:"predicted_time"`
+	ScoreBreakdown  ScoreBreakdown2022 `json:"score_breakdown"`
+	SetNumber       int                `json:"set_number"`
+	Time            int                `json:"time"`
+	Videos          []Videos           `json:"videos"`
+	WinningAlliance string             `json:"winning_alliance"`
 }
-type Alliance2022 struct {
+
+type Alliances struct {
+	Blue Alliance `json:"blue"`
+	Red  Alliance `json:"red"`
+}
+
+type Alliance struct {
 	DqTeamKeys        []any    `json:"dq_team_keys"`
 	Score             int      `json:"score"`
 	SurrogateTeamKeys []any    `json:"surrogate_team_keys"`
 	TeamKeys          []string `json:"team_keys"`
 }
-type Alliances2022 struct {
-	Blue Alliance2022 `json:"blue"`
-	Red  Alliance2022 `json:"red"`
+
+type ScoreBreakdown2022 struct {
+	Blue Scores2022 `json:"blue"`
+	Red  Scores2022 `json:"red"`
 }
-type AllianceMetrics2022 struct {
+
+type Scores2022 struct {
 	AdjustPoints            int    `json:"adjustPoints"`
 	AutoCargoLowerBlue      int    `json:"autoCargoLowerBlue"`
 	AutoCargoLowerFar       int    `json:"autoCargoLowerFar"`
@@ -109,11 +117,80 @@ type AllianceMetrics2022 struct {
 	TeleopPoints            int    `json:"teleopPoints"`
 	TotalPoints             int    `json:"totalPoints"`
 }
-type Metrics2022 struct {
-	Blue AllianceMetrics2022 `json:"blue"`
-	Red  AllianceMetrics2022 `json:"red"`
-}
+
 type Videos struct {
 	Key  string `json:"key"`
 	Type string `json:"type"`
+}
+
+type Match2023 struct {
+	ActualTime      int                `json:"actual_time"`
+	Alliances       Alliances          `json:"alliances"`
+	CompLevel       string             `json:"comp_level"`
+	EventKey        string             `json:"event_key"`
+	Key             string             `json:"key"`
+	MatchNumber     int                `json:"match_number"`
+	PostResultTime  int                `json:"post_result_time"`
+	PredictedTime   int                `json:"predicted_time"`
+	ScoreBreakdown  ScoreBreakdown2023 `json:"score_breakdown"`
+	SetNumber       int                `json:"set_number"`
+	Time            int                `json:"time"`
+	Videos          []Videos           `json:"videos"`
+	WinningAlliance string             `json:"winning_alliance"`
+}
+
+type ScoreBreakdown2023 struct {
+	Blue Scores2023 `json:"blue"`
+	Red  Scores2023 `json:"red"`
+}
+
+type Scores2023 struct {
+	ActivationBonusAchieved     bool          `json:"activationBonusAchieved"`
+	AdjustPoints                int           `json:"adjustPoints"`
+	AutoBridgeState             string        `json:"autoBridgeState"`
+	AutoChargeStationPoints     int           `json:"autoChargeStationPoints"`
+	AutoChargeStationRobot1     string        `json:"autoChargeStationRobot1"`
+	AutoChargeStationRobot2     string        `json:"autoChargeStationRobot2"`
+	AutoChargeStationRobot3     string        `json:"autoChargeStationRobot3"`
+	AutoCommunity               Community2023 `json:"autoCommunity"`
+	AutoDocked                  bool          `json:"autoDocked"`
+	AutoGamePieceCount          int           `json:"autoGamePieceCount"`
+	AutoGamePiecePoints         int           `json:"autoGamePiecePoints"`
+	AutoMobilityPoints          int           `json:"autoMobilityPoints"`
+	AutoPoints                  int           `json:"autoPoints"`
+	CoopGamePieceCount          int           `json:"coopGamePieceCount"`
+	CoopertitionCriteriaMet     bool          `json:"coopertitionCriteriaMet"`
+	EndGameBridgeState          string        `json:"endGameBridgeState"`
+	EndGameChargeStationPoints  int           `json:"endGameChargeStationPoints"`
+	EndGameChargeStationRobot1  string        `json:"endGameChargeStationRobot1"`
+	EndGameChargeStationRobot2  string        `json:"endGameChargeStationRobot2"`
+	EndGameChargeStationRobot3  string        `json:"endGameChargeStationRobot3"`
+	EndGameParkPoints           int           `json:"endGameParkPoints"`
+	FoulCount                   int           `json:"foulCount"`
+	FoulPoints                  int           `json:"foulPoints"`
+	LinkPoints                  int           `json:"linkPoints"`
+	Links                       []Link2023    `json:"links"`
+	MobilityRobot1              string        `json:"mobilityRobot1"`
+	MobilityRobot2              string        `json:"mobilityRobot2"`
+	MobilityRobot3              string        `json:"mobilityRobot3"`
+	Rp                          int           `json:"rp"`
+	SustainabilityBonusAchieved bool          `json:"sustainabilityBonusAchieved"`
+	TechFoulCount               int           `json:"techFoulCount"`
+	TeleopCommunity             Community2023 `json:"teleopCommunity"`
+	TeleopGamePieceCount        int           `json:"teleopGamePieceCount"`
+	TeleopGamePiecePoints       int           `json:"teleopGamePiecePoints"`
+	TeleopPoints                int           `json:"teleopPoints"`
+	TotalChargeStationPoints    int           `json:"totalChargeStationPoints"`
+	TotalPoints                 int           `json:"totalPoints"`
+}
+
+type Community2023 struct {
+	Bottom []string `json:"B"`
+	Middle []string `json:"M"`
+	Top    []string `json:"T"`
+}
+
+type Link2023 struct {
+	Nodes []int  `json:"nodes"`
+	Row   string `json:"row"`
 }
