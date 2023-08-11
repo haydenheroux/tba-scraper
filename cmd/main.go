@@ -17,19 +17,16 @@ import (
 
 const (
 	APP_NAME          = "tbascraper"
-	DEFAULT_EVENT     = ""
 	DEFAULT_API_KEY   = ""
 	DEFAULT_SCOUT_URL = ""
 )
 
 var (
-	eventKey string
 	apiKey   string
 	scoutURL string
 )
 
 func init() {
-	flag.StringVar(&eventKey, "eventKey", DEFAULT_EVENT, "Event Key")
 	flag.StringVar(&apiKey, "apiKey", DEFAULT_API_KEY, "API Key")
 	flag.StringVar(&scoutURL, "scoutURL", DEFAULT_SCOUT_URL, "Scout URL")
 }
@@ -49,6 +46,16 @@ func main() {
 
 	db = scout.New(scoutURL)
 
+	eventKeys := flag.Args()
+
+	for _, eventKey := range eventKeys {
+		logger.Printf("running %s\n", eventKey)
+		run(eventKey)
+	}
+
+}
+
+func run(eventKey string) {
 	event, err := api.GetEvent(eventKey)
 
 	if err != nil {
@@ -116,14 +123,14 @@ func main() {
 
 		switch match.(type) {
 		case tba.Match2022:
-			DoMatch2022(match.(tba.Match2022), event)
+			doMatch2022(match.(tba.Match2022), event)
 		case tba.Match2023:
-			DoMatch2023(match.(tba.Match2023), event)
+			doMatch2023(match.(tba.Match2023), event)
 		}
 	}
 }
 
-func DoMatch2022(match tba.Match2022, event tba.Event) {
+func doMatch2022(match tba.Match2022, event tba.Event) {
 	for n, teamKey := range match.Alliances.Blue.TeamKeys {
 		participant := scout.Participant{
 			Alliance: "blue",
@@ -172,7 +179,7 @@ func DoMatch2022(match tba.Match2022, event tba.Event) {
 
 }
 
-func DoMatch2023(match tba.Match2023, event tba.Event) {
+func doMatch2023(match tba.Match2023, event tba.Event) {
 	for n, teamKey := range match.Alliances.Blue.TeamKeys {
 		participant := scout.Participant{
 			Alliance: "blue",
