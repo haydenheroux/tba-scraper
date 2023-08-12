@@ -143,47 +143,45 @@ func run(eventKey string) {
 
 func doMatch2022(match tba.Match2022, event tba.Event) {
 	for n, teamKey := range match.Alliances.Blue.TeamKeys {
-		participant := scout.Participant{
-			Alliance: "blue",
-			Metrics:  data.Metrics2022(match.ScoreBreakdown.Blue, n),
-		}
-
 		teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
 
 		if err != nil {
 			logger.Fatalf("Failed to get team number: %v\n", err)
 		}
 
-		team, _, _ := memo.Get(teamNumber)
+		participant := scout.Participant{
+			Alliance:   "blue",
+			TeamNumber: teamNumber,
+			Metrics:    data.Metrics2022(match.ScoreBreakdown.Blue, n),
+		}
 
 		if err != nil {
 			logger.Fatalf("Failed to get team: %v\n", err)
 		}
 
-		if err := db.InsertParticipant(participant, team, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
+		if err := db.InsertParticipant(participant, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
 			logger.Fatalf("Failed to add participant: %v\n", err)
 		}
 	}
 
 	for n, teamKey := range match.Alliances.Red.TeamKeys {
-		participant := scout.Participant{
-			Alliance: "red",
-			Metrics:  data.Metrics2022(match.ScoreBreakdown.Red, n),
-		}
-
 		teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
 
 		if err != nil {
 			logger.Fatalf("Failed to get team number: %v\n", err)
 		}
 
-		team, _, _ := memo.Get(teamNumber)
+		participant := scout.Participant{
+			Alliance:   "red",
+			TeamNumber: teamNumber,
+			Metrics:    data.Metrics2022(match.ScoreBreakdown.Red, n),
+		}
 
 		if err != nil {
 			logger.Fatalf("Failed to get team: %v\n", err)
 		}
 
-		if err := db.InsertParticipant(participant, team, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
+		if err := db.InsertParticipant(participant, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
 			logger.Fatalf("Failed to add participant: %v\n", err)
 		}
 	}
@@ -192,47 +190,45 @@ func doMatch2022(match tba.Match2022, event tba.Event) {
 
 func doMatch2023(match tba.Match2023, event tba.Event) {
 	for n, teamKey := range match.Alliances.Blue.TeamKeys {
-		participant := scout.Participant{
-			Alliance: "blue",
-			Metrics:  data.Metrics2023(match.ScoreBreakdown.Blue, n),
-		}
-
 		teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
 
 		if err != nil {
 			logger.Fatalf("Failed to get team number: %v\n", err)
 		}
 
-		team, _, _ := memo.Get(teamNumber)
+		participant := scout.Participant{
+			Alliance:   "blue",
+			TeamNumber: teamNumber,
+			Metrics:    data.Metrics2023(match.ScoreBreakdown.Blue, n),
+		}
 
 		if err != nil {
 			logger.Fatalf("Failed to get team: %v\n", err)
 		}
 
-		if err := db.InsertParticipant(participant, team, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
+		if err := db.InsertParticipant(participant, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
 			logger.Fatalf("Failed to add participant: %v\n", err)
 		}
 	}
 
 	for n, teamKey := range match.Alliances.Red.TeamKeys {
-		participant := scout.Participant{
-			Alliance: "red",
-			Metrics:  data.Metrics2023(match.ScoreBreakdown.Red, n),
-		}
-
 		teamNumber, err := strconv.Atoi(strings.Split(teamKey, "frc")[1])
 
 		if err != nil {
 			logger.Fatalf("Failed to get team number: %v\n", err)
 		}
 
-		team, _, _ := memo.Get(teamNumber)
+		participant := scout.Participant{
+			Alliance:   "red",
+			TeamNumber: teamNumber,
+			Metrics:    data.Metrics2023(match.ScoreBreakdown.Red, n),
+		}
 
 		if err != nil {
 			logger.Fatalf("Failed to get team: %v\n", err)
 		}
 
-		if err := db.InsertParticipant(participant, team, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
+		if err := db.InsertParticipant(participant, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
 			logger.Fatalf("Failed to add participant: %v\n", err)
 		}
 	}

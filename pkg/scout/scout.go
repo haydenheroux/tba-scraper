@@ -3,7 +3,7 @@ package scout
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -309,7 +309,7 @@ func (s *Scout) GetTeam(teamNumber int) (Team, error) {
 		return Team{}, err
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	defer response.Body.Close()
 
 	if err != nil {
@@ -357,14 +357,14 @@ func (m *Match) MatchKey() string {
 	return s
 }
 
-func (s *Scout) InsertParticipant(participant Participant, team Team, match Match, event Event) error {
+func (s *Scout) InsertParticipant(participant Participant, match Match, event Event) error {
 	body, err := json.Marshal(participant)
 
 	if err != nil {
 		return err
 	}
 
-	request, err := s.post(newParticipantURL, join(team.ToValues(), match.ToValues(), event.ToValues()), string(body))
+	request, err := s.post(newParticipantURL, join(match.ToValues(), event.ToValues()), string(body))
 	request.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
