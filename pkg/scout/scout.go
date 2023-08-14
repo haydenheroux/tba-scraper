@@ -90,7 +90,7 @@ func (s *Scout) InsertTeam(team Team) error {
 		return err
 	}
 
-	if response.StatusCode != 200 && response.StatusCode != 500 {
+	if response.StatusCode != 200 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -121,7 +121,7 @@ func (s *Scout) InsertEvent(event Event) error {
 		return err
 	}
 
-	if response.StatusCode != 200 && response.StatusCode != 500 {
+	if response.StatusCode != 200 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -160,7 +160,7 @@ func (s *Scout) InsertSeason(season Season, team Team) error {
 		return err
 	}
 
-	if response.StatusCode != 200 && response.StatusCode != 500 {
+	if response.StatusCode != 200 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -219,7 +219,7 @@ func (s *Scout) AddEvent(event Event, season Season, team Team) error {
 		return err
 	}
 
-	if response.StatusCode != 200 && response.StatusCode != 500 {
+	if response.StatusCode != 200 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -250,7 +250,7 @@ func (s *Scout) InsertRobot(robot Robot, season Season, team Team) error {
 		return err
 	}
 
-	if response.StatusCode != 200 && response.StatusCode != 500 {
+	if response.StatusCode != 200 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -281,7 +281,7 @@ func (s *Scout) InsertMatch(match Match, event Event) error {
 		return err
 	}
 
-	if response.StatusCode != 200 && response.StatusCode != 500 {
+	if response.StatusCode != 200 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -377,7 +377,7 @@ func (s *Scout) InsertParticipant(participant Participant, match Match, event Ev
 		return err
 	}
 
-	if response.StatusCode != 200 && response.StatusCode != 500 {
+	if response.StatusCode != 200 {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
