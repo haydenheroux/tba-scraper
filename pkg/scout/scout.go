@@ -43,7 +43,8 @@ func (s *Scout) post(endpoint string, values url.Values, body string) (*http.Req
 }
 
 const (
-	created = 201
+	created  = 201
+	conflict = 409
 )
 
 const (
@@ -70,7 +71,7 @@ func (s *Scout) InsertTeam(team Team) error {
 		return err
 	}
 
-	if response.StatusCode != created {
+	if response.StatusCode != created && response.StatusCode != conflict {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -101,7 +102,7 @@ func (s *Scout) InsertEvent(event Event) error {
 		return err
 	}
 
-	if response.StatusCode != created {
+	if response.StatusCode != created && response.StatusCode != conflict {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -140,7 +141,7 @@ func (s *Scout) InsertSeason(season Season, team Team) error {
 		return err
 	}
 
-	if response.StatusCode != created {
+	if response.StatusCode != created && response.StatusCode != conflict {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -199,7 +200,7 @@ func (s *Scout) AddEvent(event Event, season Season, team Team) error {
 		return err
 	}
 
-	if response.StatusCode != created {
+	if response.StatusCode != created && response.StatusCode != conflict {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -230,7 +231,7 @@ func (s *Scout) InsertRobot(robot Robot, season Season, team Team) error {
 		return err
 	}
 
-	if response.StatusCode != created {
+	if response.StatusCode != created && response.StatusCode != conflict {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -261,7 +262,7 @@ func (s *Scout) InsertMatch(match Match, event Event) error {
 		return err
 	}
 
-	if response.StatusCode != created {
+	if response.StatusCode != created && response.StatusCode != conflict {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
@@ -323,7 +324,7 @@ func (s *Scout) InsertParticipant(participant Participant, match Match, event Ev
 		return err
 	}
 
-	if response.StatusCode != created {
+	if response.StatusCode != created && response.StatusCode != conflict {
 		return fmt.Errorf("status code %d", response.StatusCode)
 	}
 
