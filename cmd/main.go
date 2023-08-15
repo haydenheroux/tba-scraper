@@ -66,14 +66,16 @@ func main() {
 func run(eventKey string) {
 	logger.Printf("running %s\n", eventKey)
 
-	event, err := api.GetEvent(eventKey)
+	_event, err := api.GetEvent(eventKey)
 
 	if err != nil {
 		logger.Fatalf("Failed to get event: %v\n", err)
 	}
 
-	if err := db.InsertEvent(adapter.ToEvent(event)); err != nil {
-		logger.Fatalf("Failed to insert event: %v\n", err)
+	event := adapter.ToEvent(_event)
+
+	if err := db.InsertEvent(event); err != nil {
+		logger.Fatalf("Failed to insert event: %v\n%v\n", err, event)
 	}
 
 	teams, err := api.GetTeams(eventKey)
@@ -86,7 +88,7 @@ func run(eventKey string) {
 		team := adapter.ToTeam(team)
 
 		if err := db.InsertTeam(team); err != nil {
-			logger.Fatalf("Failed to insert team: %v\n", err)
+			logger.Fatalf("Failed to insert team: %v\n%v\n", err, team)
 		}
 
 		season := scout.Season{
@@ -104,11 +106,11 @@ func run(eventKey string) {
 		}
 
 		if err := db.InsertRobot(robot, season, team); err != nil {
-			logger.Fatalf("Failed to insert robot: %v\n", err)
+			logger.Fatalf("Failed to insert robot: %v\n%v\n", err, robot)
 		}
 
-		if err := db.AddEvent(adapter.ToEvent(event), season, team); err != nil {
-			logger.Fatalf("Failed to add event: %v\n", err)
+		if err := db.AddEvent(event, season, team); err != nil {
+			logger.Fatalf("Failed to add event: %v\n%v\n", err, event)
 		}
 	}
 
@@ -119,21 +121,23 @@ func run(eventKey string) {
 	}
 
 	for _, matchKey := range matchKeys {
-		match, err := api.GetMatch(matchKey, event.Year)
+		_match, err := api.GetMatch(matchKey, event.Year)
 
 		if err != nil {
 			logger.Fatalf("Failed to get match: %v\n", err)
 		}
 
-		if err := db.InsertMatch(adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
-			logger.Fatalf("Failed to add match: %v\n", err)
+		match := adapter.ToMatch(_match)
+
+		if err := db.InsertMatch(match, event); err != nil {
+			logger.Fatalf("Failed to add match: %v\n%v\n", err, match)
 		}
 
-		switch match.(type) {
+		switch _match.(type) {
 		case tba.Match2022:
-			doMatch2022(match.(tba.Match2022), event)
+			doMatch2022(_match.(tba.Match2022), _event)
 		case tba.Match2023:
-			doMatch2023(match.(tba.Match2023), event)
+			doMatch2023(_match.(tba.Match2023), _event)
 		}
 	}
 }
@@ -157,7 +161,7 @@ func doMatch2022(match tba.Match2022, event tba.Event) {
 		}
 
 		if err := db.InsertParticipant(participant, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
-			logger.Fatalf("Failed to add participant: %v\n", err)
+			logger.Fatalf("Failed to add participant: %v\n%v\n", err, participant)
 		}
 	}
 
@@ -179,7 +183,7 @@ func doMatch2022(match tba.Match2022, event tba.Event) {
 		}
 
 		if err := db.InsertParticipant(participant, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
-			logger.Fatalf("Failed to add participant: %v\n", err)
+			logger.Fatalf("Failed to add participant: %v\n%v\n", err, participant)
 		}
 	}
 
@@ -204,7 +208,7 @@ func doMatch2023(match tba.Match2023, event tba.Event) {
 		}
 
 		if err := db.InsertParticipant(participant, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
-			logger.Fatalf("Failed to add participant: %v\n", err)
+			logger.Fatalf("Failed to add participant: %v\n%v\n", err, participant)
 		}
 	}
 
@@ -226,7 +230,7 @@ func doMatch2023(match tba.Match2023, event tba.Event) {
 		}
 
 		if err := db.InsertParticipant(participant, adapter.ToMatch(match), adapter.ToEvent(event)); err != nil {
-			logger.Fatalf("Failed to add participant: %v\n", err)
+			logger.Fatalf("Failed to add participant: %v\n%v\n", err, participant)
 		}
 	}
 
