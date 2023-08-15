@@ -1,1 +1,2 @@
-module haydenheroux.github.io/scout
+module github.com/haydenheroux/scout
+

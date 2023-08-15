@@ -1,8 +1,8 @@
 package adapter
 
 import (
-	"haydenheroux.github.io/scout"
-	"haydenheroux.github.io/tba"
+	"github.com/haydenheroux/scout"
+	"github.com/haydenheroux/tba"
 )
 
 func ToTeam(team tba.Team) scout.Team {

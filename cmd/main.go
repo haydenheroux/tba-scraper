@@ -9,10 +9,10 @@ import (
 	"strings"
 	"sync"
 
-	"haydenheroux.github.io/adapter"
-	"haydenheroux.github.io/data"
-	"haydenheroux.github.io/scout"
-	"haydenheroux.github.io/tba"
+	"github.com/haydenheroux/adapter"
+	"github.com/haydenheroux/data"
+	"github.com/haydenheroux/scout"
+	"github.com/haydenheroux/tba"
 )
 
 const (

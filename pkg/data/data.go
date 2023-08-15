@@ -3,8 +3,8 @@ package data
 import (
 	"fmt"
 
-	"haydenheroux.github.io/scout"
-	"haydenheroux.github.io/tba"
+	"github.com/haydenheroux/scout"
+	"github.com/haydenheroux/tba"
 )
 
 func Metrics2022(scores tba.Scores2022, robotIndex int) []scout.Metric {
