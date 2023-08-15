@@ -3,7 +3,6 @@ package scout
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -35,29 +34,6 @@ func (s *Scout) post(endpoint string, values url.Values, body string) (*http.Req
 	}
 
 	request, err := http.NewRequest("POST", url.String(), strings.NewReader(body))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return request, nil
-}
-func (s *Scout) get(endpoint string, values url.Values) (*http.Request, error) {
-	var query string
-
-	if len(values) > 0 {
-		query = "?" + values.Encode()
-	} else {
-		query = ""
-	}
-
-	url, err := url.Parse(s.URL + endpoint + query)
-
-	if err != nil || url.Scheme == "" || url.Host == "" {
-		return nil, fmt.Errorf("malformed url")
-	}
-
-	request, err := http.NewRequest("GET", url.String(), nil)
 
 	if err != nil {
 		return nil, err
@@ -286,40 +262,6 @@ func (s *Scout) InsertMatch(match Match, event Event) error {
 	}
 
 	return nil
-}
-
-const (
-	getTeamURL = "/api/get-team"
-)
-
-func (s *Scout) GetTeam(teamNumber int) (Team, error) {
-	values := url.Values{}
-
-	values.Add("team", fmt.Sprint(teamNumber))
-
-	request, err := s.get(getTeamURL, values)
-
-	if err != nil {
-		return Team{}, err
-	}
-
-	response, err := http.DefaultClient.Do(request)
-
-	if err != nil {
-		return Team{}, err
-	}
-
-	body, err := io.ReadAll(response.Body)
-	defer response.Body.Close()
-
-	if err != nil {
-		return Team{}, err
-	}
-
-	var team Team
-	json.Unmarshal(body, &team)
-
-	return team, nil
 }
 
 const (
