@@ -8,8 +8,11 @@ replace haydenheroux.github.io/scout => ./pkg/scout
 
 replace haydenheroux.github.io/adapter => ./pkg/adapter
 
+replace haydenheroux.github.io/data => ./pkg/data
+
 require (
 	haydenheroux.github.io/adapter v0.0.0-00010101000000-000000000000
+	haydenheroux.github.io/data v0.0.0-00010101000000-000000000000
 	haydenheroux.github.io/scout v0.0.0-00010101000000-000000000000
 	haydenheroux.github.io/tba v0.0.0-00010101000000-000000000000
 )

@@ -10,10 +10,9 @@ import (
 	"sync"
 
 	"haydenheroux.github.io/adapter"
+	"haydenheroux.github.io/data"
 	"haydenheroux.github.io/scout"
 	"haydenheroux.github.io/tba"
-	"haydenheroux.github.io/tbascraper/pkg/data"
-	"haydenheroux.github.io/tbascraper/pkg/memo"
 )
 
 const (
@@ -111,8 +110,6 @@ func run(eventKey string) {
 		if err := db.AddEvent(adapter.ToEvent(event), season, team); err != nil {
 			logger.Fatalf("Failed to add event: %v\n", err)
 		}
-
-		memo.Memoize(team, season, robot)
 	}
 
 	matchKeys, err := api.GetMatchKeys(eventKey)
