@@ -15,9 +15,17 @@ func ToTeam(team tba.Team) scout.Team {
 }
 
 func ToEvent(event tba.Event) scout.Event {
+	var region string
+
+	if event.District.Abbreviation != "" {
+		region = event.District.Abbreviation
+	} else {
+		region = "other"
+	}
+
 	return scout.Event{
 		Name:    event.Name,
-		Region:  "ne", // TODO event.District.Abbreviation
+		Region:  region,
 		Year:    event.Year,
 		Week:    0, // TODO
 		Matches: []scout.Match{},
