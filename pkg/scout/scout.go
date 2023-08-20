@@ -35,6 +35,8 @@ func (s *Scout) post(endpoint string, values url.Values, body string) (*http.Req
 
 	request, err := http.NewRequest("POST", url.String(), strings.NewReader(body))
 
+	fmt.Println(request)
+
 	if err != nil {
 		return nil, err
 	}
@@ -163,10 +165,7 @@ func (s *Season) ToValues() url.Values {
 func (e *Event) ToValues() url.Values {
 	values := url.Values{}
 
-	values.Add("event", e.Name)
-	values.Add("region", e.Region)
-	values.Add("year", fmt.Sprint(e.Year))
-	values.Add("week", fmt.Sprint(e.Week))
+	values.Add("event", e.Code)
 
 	return values
 }

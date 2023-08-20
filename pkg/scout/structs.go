@@ -18,6 +18,7 @@ type Robot struct {
 }
 
 type Event struct {
+	Code    string  `json:"code"`
 	Name    string  `json:"name"`
 	Region  string  `json:"region"`
 	Year    int     `json:"year"`

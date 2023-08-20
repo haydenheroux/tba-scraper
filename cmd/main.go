@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/haydenheroux/adapter"
 	"github.com/haydenheroux/data"
@@ -48,19 +47,9 @@ func main() {
 
 	eventKeys := flag.Args()
 
-	var wg sync.WaitGroup
-
 	for _, eventKey := range eventKeys {
-		wg.Add(1)
-
-		go func(eventKey string) {
-			defer wg.Done()
-
-			run(eventKey)
-		}(eventKey)
+		run(eventKey)
 	}
-
-	wg.Wait()
 }
 
 func run(eventKey string) {
@@ -73,6 +62,8 @@ func run(eventKey string) {
 	}
 
 	event := adapter.ToEvent(_event)
+
+	println(event.Code)
 
 	if err := db.InsertEvent(event); err != nil {
 		logger.Fatalf("Failed to insert event: %v\n%v\n", err, event)

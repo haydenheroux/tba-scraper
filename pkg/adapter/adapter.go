@@ -23,7 +23,10 @@ func ToEvent(event tba.Event) scout.Event {
 		region = "other"
 	}
 
+	println(event.Key)
+
 	return scout.Event{
+		Code:    event.Key,
 		Name:    event.Name,
 		Region:  region,
 		Year:    event.Year,
