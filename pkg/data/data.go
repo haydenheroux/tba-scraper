@@ -7,22 +7,7 @@ import (
 	"github.com/haydenheroux/tba"
 )
 
-func Metrics2022(scores tba.Scores2022, robotIndex int) []scout.Metric {
-	var autoTaxi string
-	var endgameClimb string
-
-	switch robotIndex {
-	case 0:
-		autoTaxi = scores.TaxiRobot1
-		endgameClimb = scores.EndgameRobot1
-	case 1:
-		autoTaxi = scores.TaxiRobot2
-		endgameClimb = scores.EndgameRobot2
-	case 2:
-		autoTaxi = scores.TaxiRobot3
-		endgameClimb = scores.EndgameRobot3
-	}
-
+func AllianceMetrics2022(scores tba.Scores2022) []scout.Metric {
 	autoScoredUpper := scores.AutoCargoUpperBlue + scores.AutoCargoUpperRed + scores.AutoCargoUpperFar + scores.AutoCargoUpperNear
 	autoScoredLower := scores.AutoCargoLowerBlue + scores.AutoCargoLowerRed + scores.AutoCargoLowerFar + scores.AutoCargoLowerNear
 	teleopScoredUpper := scores.TeleopCargoUpperBlue + scores.TeleopCargoUpperRed + scores.TeleopCargoUpperFar + scores.TeleopCargoUpperNear
@@ -30,7 +15,6 @@ func Metrics2022(scores tba.Scores2022, robotIndex int) []scout.Metric {
 
 	var metrics []scout.Metric
 
-	metrics = append(metrics, scout.Metric{Key: "autoTaxi", Value: autoTaxi})
 	metrics = append(metrics, scout.Metric{Key: "_allianceAutoCargoScored", Value: fmt.Sprint(scores.AutoCargoTotal)})
 	metrics = append(metrics, scout.Metric{Key: "_allianceAutoCargoScoredLower", Value: fmt.Sprint(autoScoredLower)})
 	metrics = append(metrics, scout.Metric{Key: "_allianceAutoCargoScoredUpper", Value: fmt.Sprint(autoScoredUpper)})
@@ -43,35 +27,11 @@ func Metrics2022(scores tba.Scores2022, robotIndex int) []scout.Metric {
 	metrics = append(metrics, scout.Metric{Key: "_allianceTeleopCargoPoints", Value: fmt.Sprint(scores.TeleopCargoPoints)})
 	metrics = append(metrics, scout.Metric{Key: "_allianceTeleopPoints", Value: fmt.Sprint(scores.TeleopPoints)})
 
-	metrics = append(metrics, scout.Metric{Key: "endgameClimb", Value: endgameClimb})
-
 	return metrics
 }
 
-func Metrics2023(scores tba.Scores2023, robotIndex int) []scout.Metric {
-	var autoMobility string
-	var autoChargeStation string
-	var endgameChargeStation string
-
-	switch robotIndex {
-	case 0:
-		autoMobility = scores.MobilityRobot1
-		autoChargeStation = scores.AutoChargeStationRobot1
-		endgameChargeStation = scores.EndGameChargeStationRobot1
-	case 1:
-		autoMobility = scores.MobilityRobot2
-		autoChargeStation = scores.AutoChargeStationRobot2
-		endgameChargeStation = scores.EndGameChargeStationRobot2
-	case 2:
-		autoMobility = scores.MobilityRobot3
-		autoChargeStation = scores.AutoChargeStationRobot3
-		endgameChargeStation = scores.EndGameChargeStationRobot3
-	}
-
+func AllianceMetrics2023(scores tba.Scores2023) []scout.Metric {
 	var metrics []scout.Metric
-
-	metrics = append(metrics, scout.Metric{Key: "autoMobility", Value: autoMobility})
-	metrics = append(metrics, scout.Metric{Key: "autoChargeStation", Value: autoChargeStation})
 
 	allianceAutoCubesBottom, allianceAutoCubesMiddle, allianceAutoCubesTop := countCommunity(scores.AutoCommunity, IS_CUBE)
 	allianceAutoCubesTotal := allianceAutoCubesBottom + allianceAutoCubesMiddle + allianceAutoCubesTop
@@ -112,8 +72,6 @@ func Metrics2023(scores tba.Scores2023, robotIndex int) []scout.Metric {
 	metrics = append(metrics, scout.Metric{Key: "_allianceLinksMiddle", Value: fmt.Sprint(allianceLinksMiddle)})
 	metrics = append(metrics, scout.Metric{Key: "_allianceLinksTop", Value: fmt.Sprint(allianceLinksTop)})
 	metrics = append(metrics, scout.Metric{Key: "_allianceLinksTotal", Value: fmt.Sprint(allianceLinksTotal)})
-
-	metrics = append(metrics, scout.Metric{Key: "endgameChargeStation", Value: endgameChargeStation})
 
 	return metrics
 }

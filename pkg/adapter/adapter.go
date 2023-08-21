@@ -23,8 +23,6 @@ func ToEvent(event tba.Event) scout.Event {
 		region = "other"
 	}
 
-	println(event.Key)
-
 	return scout.Event{
 		Code:    event.Key,
 		Name:    event.Name,
@@ -40,18 +38,18 @@ func ToMatch(match any) scout.Match {
 	case tba.Match2023:
 		match2023 := match.(tba.Match2023)
 		return scout.Match{
-			Set:          match2023.SetNumber,
-			Number:       match2023.MatchNumber,
-			Type:         match2023.CompLevel,
-			Participants: []scout.Participant{},
+			Set:       match2023.SetNumber,
+			Number:    match2023.MatchNumber,
+			Type:      match2023.CompLevel,
+			Alliances: []scout.Alliance{},
 		}
 	case tba.Match2022:
 		match2022 := match.(tba.Match2022)
 		return scout.Match{
-			Set:          match2022.SetNumber,
-			Number:       match2022.MatchNumber,
-			Type:         match2022.CompLevel,
-			Participants: []scout.Participant{},
+			Set:       match2022.SetNumber,
+			Number:    match2022.MatchNumber,
+			Type:      match2022.CompLevel,
+			Alliances: []scout.Alliance{},
 		}
 	default:
 		return scout.Match{}

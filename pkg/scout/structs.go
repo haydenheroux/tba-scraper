@@ -27,14 +27,19 @@ type Event struct {
 }
 
 type Match struct {
-	Set          int           `json:"set"`
-	Number       int           `json:"number"`
-	Type         string        `json:"type"`
-	Participants []Participant `json:"participants"` // TODO Must be empty
+	Set       int        `json:"set"`
+	Number    int        `json:"number"`
+	Type      string     `json:"type"`
+	Alliances []Alliance `json:"alliances"` // TODO Must be empty
+}
+
+type Alliance struct {
+	Color        string        `json:"color"`
+	Metrics      []Metric      `json:"metrics"`
+	Participants []Participant `json:"participants"`
 }
 
 type Participant struct {
-	Alliance   string   `json:"alliance"`
 	TeamNumber int      `json:"teamNumber"`
 	Metrics    []Metric `json:"metrics"`
 }

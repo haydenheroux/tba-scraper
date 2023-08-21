@@ -303,14 +303,55 @@ func (m *Match) MatchKey() string {
 	return s
 }
 
-func (s *Scout) InsertParticipant(participant Participant, match Match, event Event) error {
+const (
+	newAllianceURL = "/api/new-alliance"
+)
+
+func (s *Scout) InsertAlliance(alliance Alliance, match Match, event Event) error {
+	body, err := json.Marshal(alliance)
+
+	fmt.Println(string(body))
+
+	if err != nil {
+		return err
+	}
+
+	request, err := s.post(newAllianceURL, join(match.ToValues(), event.ToValues()), string(body))
+	request.Header.Set("Content-Type", "application/json")
+
+	if err != nil {
+		return err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode != created && response.StatusCode != conflict {
+		return fmt.Errorf("status code %d", response.StatusCode)
+	}
+
+	return nil
+}
+
+func (a *Alliance) ToValues() url.Values {
+	values := url.Values{}
+
+	values.Add("alliance", a.Color)
+
+	return values
+}
+
+func (s *Scout) InsertParticipant(participant Participant, alliance Alliance, match Match, event Event) error {
 	body, err := json.Marshal(participant)
 
 	if err != nil {
 		return err
 	}
 
-	request, err := s.post(newParticipantURL, join(match.ToValues(), event.ToValues()), string(body))
+	request, err := s.post(newParticipantURL, join(alliance.ToValues(), match.ToValues(), event.ToValues()), string(body))
 	request.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
