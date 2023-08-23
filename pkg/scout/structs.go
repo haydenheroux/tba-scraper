@@ -34,17 +34,12 @@ type Match struct {
 }
 
 type Alliance struct {
-	Color        string        `json:"color"`
-	Metrics      []Metric      `json:"metrics"`
-	Participants []Participant `json:"participants"`
+	Color        string            `json:"color"`
+	Metrics      map[string]string `json:"metrics"`
+	Participants []Participant     `json:"participants"`
 }
 
 type Participant struct {
-	TeamNumber int      `json:"teamNumber"`
-	Metrics    []Metric `json:"metrics"`
-}
-
-type Metric struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	TeamNumber int               `json:"teamNumber"`
+	Metrics    map[string]string `json:"metrics"`
 }

@@ -157,7 +157,7 @@ func doMatch2022(match tba.Match2022, event tba.Event) {
 
 		participant := scout.Participant{
 			TeamNumber: teamNumber,
-			Metrics:    []scout.Metric{},
+			Metrics:    make(map[string]string),
 		}
 
 		if err != nil {
@@ -178,7 +178,7 @@ func doMatch2022(match tba.Match2022, event tba.Event) {
 
 		participant := scout.Participant{
 			TeamNumber: teamNumber,
-			Metrics:    []scout.Metric{},
+			Metrics:    make(map[string]string),
 		}
 
 		if err != nil {
@@ -216,7 +216,7 @@ func doMatch2023(match tba.Match2023, event tba.Event) {
 
 		participant := scout.Participant{
 			TeamNumber: teamNumber,
-			Metrics:    []scout.Metric{},
+			Metrics:    make(map[string]string),
 		}
 
 		if err != nil {
@@ -237,7 +237,7 @@ func doMatch2023(match tba.Match2023, event tba.Event) {
 
 		participant := scout.Participant{
 			TeamNumber: teamNumber,
-			Metrics:    []scout.Metric{},
+			Metrics:    make(map[string]string),
 		}
 
 		if err != nil {

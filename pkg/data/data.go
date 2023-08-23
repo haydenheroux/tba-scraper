@@ -3,75 +3,74 @@ package data
 import (
 	"fmt"
 
-	"github.com/haydenheroux/scout"
 	"github.com/haydenheroux/tba"
 )
 
-func AllianceMetrics2022(scores tba.Scores2022) []scout.Metric {
+func AllianceMetrics2022(scores tba.Scores2022) map[string]string {
 	autoScoredUpper := scores.AutoCargoUpperBlue + scores.AutoCargoUpperRed + scores.AutoCargoUpperFar + scores.AutoCargoUpperNear
 	autoScoredLower := scores.AutoCargoLowerBlue + scores.AutoCargoLowerRed + scores.AutoCargoLowerFar + scores.AutoCargoLowerNear
 	teleopScoredUpper := scores.TeleopCargoUpperBlue + scores.TeleopCargoUpperRed + scores.TeleopCargoUpperFar + scores.TeleopCargoUpperNear
 	teleopScoredLower := scores.TeleopCargoLowerBlue + scores.TeleopCargoLowerRed + scores.TeleopCargoLowerFar + scores.TeleopCargoLowerNear
 
-	var metrics []scout.Metric
+	var metrics map[string]string
 
-	metrics = append(metrics, scout.Metric{Key: "autoCargoScored", Value: fmt.Sprint(scores.AutoCargoTotal)})
-	metrics = append(metrics, scout.Metric{Key: "autoCargoScoredLower", Value: fmt.Sprint(autoScoredLower)})
-	metrics = append(metrics, scout.Metric{Key: "autoCargoScoredUpper", Value: fmt.Sprint(autoScoredUpper)})
-	metrics = append(metrics, scout.Metric{Key: "autoCargoPoints", Value: fmt.Sprint(scores.AutoCargoPoints)})
-	metrics = append(metrics, scout.Metric{Key: "autoPoints", Value: fmt.Sprint(scores.AutoPoints)})
+	metrics["autoCargoScored"] = fmt.Sprint(scores.AutoCargoTotal)
+	metrics["autoCargoScoredLower"] = fmt.Sprint(autoScoredLower)
+	metrics["autoCargoScoredUpper"] = fmt.Sprint(autoScoredUpper)
+	metrics["autoCargoPoints"] = fmt.Sprint(scores.AutoCargoPoints)
+	metrics["autoPoints"] = fmt.Sprint(scores.AutoPoints)
 
-	metrics = append(metrics, scout.Metric{Key: "teleopCargoScored", Value: fmt.Sprint(scores.TeleopCargoTotal)})
-	metrics = append(metrics, scout.Metric{Key: "teleopCargoScoredLower", Value: fmt.Sprint(teleopScoredLower)})
-	metrics = append(metrics, scout.Metric{Key: "teleopCargoScoredUpper", Value: fmt.Sprint(teleopScoredUpper)})
-	metrics = append(metrics, scout.Metric{Key: "teleopCargoPoints", Value: fmt.Sprint(scores.TeleopCargoPoints)})
-	metrics = append(metrics, scout.Metric{Key: "teleopPoints", Value: fmt.Sprint(scores.TeleopPoints)})
+	metrics["teleopCargoScored"] = fmt.Sprint(scores.TeleopCargoTotal)
+	metrics["teleopCargoScoredLower"] = fmt.Sprint(teleopScoredLower)
+	metrics["teleopCargoScoredUpper"] = fmt.Sprint(teleopScoredUpper)
+	metrics["teleopCargoPoints"] = fmt.Sprint(scores.TeleopCargoPoints)
+	metrics["teleopPoints"] = fmt.Sprint(scores.TeleopPoints)
 
 	return metrics
 }
 
-func AllianceMetrics2023(scores tba.Scores2023) []scout.Metric {
-	var metrics []scout.Metric
+func AllianceMetrics2023(scores tba.Scores2023) map[string]string {
+	var metrics map[string]string
 
 	allianceAutoCubesBottom, allianceAutoCubesMiddle, allianceAutoCubesTop := countCommunity(scores.AutoCommunity, IS_CUBE)
 	allianceAutoCubesTotal := allianceAutoCubesBottom + allianceAutoCubesMiddle + allianceAutoCubesTop
 
-	metrics = append(metrics, scout.Metric{Key: "autoCubesBottom", Value: fmt.Sprint(allianceAutoCubesBottom)})
-	metrics = append(metrics, scout.Metric{Key: "autoCubesMiddle", Value: fmt.Sprint(allianceAutoCubesMiddle)})
-	metrics = append(metrics, scout.Metric{Key: "autoCubesTop", Value: fmt.Sprint(allianceAutoCubesTop)})
-	metrics = append(metrics, scout.Metric{Key: "autoCubesTotal", Value: fmt.Sprint(allianceAutoCubesTotal)})
+	metrics["autoCubesBottom"] = fmt.Sprint(allianceAutoCubesBottom)
+	metrics["autoCubesMiddle"] = fmt.Sprint(allianceAutoCubesMiddle)
+	metrics["autoCubesTop"] = fmt.Sprint(allianceAutoCubesTop)
+	metrics["autoCubesTotal"] = fmt.Sprint(allianceAutoCubesTotal)
 
 	allianceAutoConesBottom, allianceAutoConesMiddle, allianceAutoConesTop := countCommunity(scores.AutoCommunity, IS_CONE)
 	allianceAutoConesTotal := allianceAutoConesBottom + allianceAutoConesMiddle + allianceAutoConesTop
 
-	metrics = append(metrics, scout.Metric{Key: "autoConesBottom", Value: fmt.Sprint(allianceAutoConesBottom)})
-	metrics = append(metrics, scout.Metric{Key: "autoConesMiddle", Value: fmt.Sprint(allianceAutoConesMiddle)})
-	metrics = append(metrics, scout.Metric{Key: "autoConesTop", Value: fmt.Sprint(allianceAutoConesTop)})
-	metrics = append(metrics, scout.Metric{Key: "autoConesTotal", Value: fmt.Sprint(allianceAutoConesTotal)})
+	metrics["autoConesBottom"] = fmt.Sprint(allianceAutoConesBottom)
+	metrics["autoConesMiddle"] = fmt.Sprint(allianceAutoConesMiddle)
+	metrics["autoConesTop"] = fmt.Sprint(allianceAutoConesTop)
+	metrics["autoConesTotal"] = fmt.Sprint(allianceAutoConesTotal)
 
 	allianceTeleopCubesBottom, allianceTeleopCubesMiddle, allianceTeleopCubesTop := countCommunity(scores.TeleopCommunity, IS_CUBE)
 	allianceTeleopCubesTotal := allianceTeleopCubesBottom + allianceTeleopCubesMiddle + allianceTeleopCubesTop
 
-	metrics = append(metrics, scout.Metric{Key: "teleopCubesBottom", Value: fmt.Sprint(allianceTeleopCubesBottom)})
-	metrics = append(metrics, scout.Metric{Key: "teleopCubesMiddle", Value: fmt.Sprint(allianceTeleopCubesMiddle)})
-	metrics = append(metrics, scout.Metric{Key: "teleopCubesTop", Value: fmt.Sprint(allianceTeleopCubesTop)})
-	metrics = append(metrics, scout.Metric{Key: "teleopCubesTotal", Value: fmt.Sprint(allianceTeleopCubesTotal)})
+	metrics["teleopCubesBottom"] = fmt.Sprint(allianceTeleopCubesBottom)
+	metrics["teleopCubesMiddle"] = fmt.Sprint(allianceTeleopCubesMiddle)
+	metrics["teleopCubesTop"] = fmt.Sprint(allianceTeleopCubesTop)
+	metrics["teleopCubesTotal"] = fmt.Sprint(allianceTeleopCubesTotal)
 
 	allianceTeleopConesBottom, allianceTeleopConesMiddle, allianceTeleopConesTop := countCommunity(scores.TeleopCommunity, IS_CONE)
 	allianceTeleopConesTotal := allianceTeleopConesBottom + allianceTeleopConesMiddle + allianceTeleopConesTop
 
-	metrics = append(metrics, scout.Metric{Key: "teleopConesBottom", Value: fmt.Sprint(allianceTeleopConesBottom)})
-	metrics = append(metrics, scout.Metric{Key: "teleopConesMiddle", Value: fmt.Sprint(allianceTeleopConesMiddle)})
-	metrics = append(metrics, scout.Metric{Key: "teleopConesTop", Value: fmt.Sprint(allianceTeleopConesTop)})
-	metrics = append(metrics, scout.Metric{Key: "teleopConesTotal", Value: fmt.Sprint(allianceTeleopConesTotal)})
+	metrics["teleopConesBottom"] = fmt.Sprint(allianceTeleopConesBottom)
+	metrics["teleopConesMiddle"] = fmt.Sprint(allianceTeleopConesMiddle)
+	metrics["teleopConesTop"] = fmt.Sprint(allianceTeleopConesTop)
+	metrics["teleopConesTotal"] = fmt.Sprint(allianceTeleopConesTotal)
 
 	allianceLinksBottom, allianceLinksMiddle, allianceLinksTop := countLinks(scores.Links)
 	allianceLinksTotal := allianceLinksBottom + allianceLinksMiddle + allianceLinksTop
 
-	metrics = append(metrics, scout.Metric{Key: "linksBottom", Value: fmt.Sprint(allianceLinksBottom)})
-	metrics = append(metrics, scout.Metric{Key: "linksMiddle", Value: fmt.Sprint(allianceLinksMiddle)})
-	metrics = append(metrics, scout.Metric{Key: "linksTop", Value: fmt.Sprint(allianceLinksTop)})
-	metrics = append(metrics, scout.Metric{Key: "linksTotal", Value: fmt.Sprint(allianceLinksTotal)})
+	metrics["linksBottom"] = fmt.Sprint(allianceLinksBottom)
+	metrics["linksMiddle"] = fmt.Sprint(allianceLinksMiddle)
+	metrics["linksTop"] = fmt.Sprint(allianceLinksTop)
+	metrics["linksTotal"] = fmt.Sprint(allianceLinksTotal)
 
 	return metrics
 }
